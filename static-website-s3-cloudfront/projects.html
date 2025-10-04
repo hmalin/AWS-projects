@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Lloyd Malin — Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Projects by Lloyd Malin.">
+  <meta property="og:title" content="Lloyd Malin — Projects">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/portfoliostyles12.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="theme-color" content="#0b0f14">
+  
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="myname"><a href="portfolio.html">Lloyd Malin</a></h1>
+      <nav class="site-nav" aria-label="Primary">
+        <ul class="nav-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="education.html">Experience &amp; Education</a></li>
+          <li><a href="projects.html" aria-current="page">Projects</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container content">
+    <section class="projects-grid">
+      <article class="card project">
+        <h3>GitOps Homelab</h3>
+        <p>Argo CD + Helm managing a K3s cluster, including TLS via Traefik and Cloudflare!</p>
+        <video controls muted playsinline preload="metadata">
+          <source src="media/argocd.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </article>
+
+      <article class="card project">
+        <h3>vLLM on GPU</h3>
+        <p>Serving LLMs with NVIDIA GPU scheduling, NFS-backed models on k3s!</p>
+        <video controls muted playsinline preload="metadata">
+          <source src="media/vllm-demo.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </article>
+
+      <article class="card project">
+        <h3>Ansible Fleet Updates</h3>
+        <p>Patching and config management across nodes with idempotent playbooks! </p>
+        <video controls muted playsinline preload="metadata">
+          <source src="media/ansible.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </article>
+    </section>
+
+    <section class="cta">
+      <p>More on GitHub:</p>
+      <p><a class="btn" href="https://github.com/hmalin" target="_blank" rel="noopener noreferrer">github.com/hmalin</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Lloyd Malin</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
