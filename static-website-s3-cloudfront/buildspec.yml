@@ -3,24 +3,25 @@ phases:
   install:
     commands:
       - aws --version
-      - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
+      - echo "SRC=$CODEBUILD_SRC_DIR"
+      - echo "Deploying $WEBSITE_DIR -> s3://$BUCKET_NAME"
+      - |
+        if [ ! -d "$WEBSITE_DIR" ]; then
+          echo "ERROR: '$WEBSITE_DIR' not found. Here’s the top-level tree:"; find . -maxdepth 3 -type d
+          exit 1
+        fi
   build:
     commands:
-      # 1) Assets (long cache)
       - >
         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
         --delete
         --exclude "*.html"
         --cache-control "max-age=31536000,public"
-
-      # 2) HTML (no-cache so edits show immediately)
       - >
         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
         --exclude "*"
         --include "*.html"
         --cache-control "no-cache"
-
-      # 3) Optional: invalidate HTML at the edge
       - |
         if [ -n "${DISTRIBUTION_ID:-}" ]; then
           PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
