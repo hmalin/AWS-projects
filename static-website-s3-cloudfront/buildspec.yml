@@ -19,9 +19,8 @@ phases:
         --exclude "*"
         --include "*.html"
         --cache-control "no-cache"
-      #  Optional: invalidate HTML at the edge
+    # Optional: invalidate HTML at the edge
       - |
-
         if [ -n "${DISTRIBUTION_ID:-}" ]; then
 
           PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
