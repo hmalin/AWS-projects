@@ -1,12 +1,11 @@
 version: 0.2
-
 phases:
-  install:
-    commands:
+  install:
+    commands:
       - aws --version
       - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
-  build:
-    commands:
+  build:
+    commands:
     # long cache    
       - >
         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
