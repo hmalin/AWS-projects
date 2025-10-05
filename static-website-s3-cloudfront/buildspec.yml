@@ -2,28 +2,27 @@ version: 0.2
 phases:
   install:
     commands:
-      - aws --version
+      - aws --version
       - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
   build:
     commands:
-    # long cache    
-      - >
-        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
-        --delete
-        --exclude "*.html"
-        --cache-control "max-age=31536000,public"
-    # no cache
+      # 1) Assets (long cache)
       - >
-        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
-        --exclude "*"
-        --include "*.html"
-        --cache-control "no-cache"
-    # Optional: invalidate HTML at the edge
-      - |
-        if [ -n "${DISTRIBUTION_ID:-}" ]; then
+        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
+        --delete
+        --exclude "*.html"
+        --cache-control "max-age=31536000,public"
 
-          PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
+      # 2) HTML (no-cache so edits show immediately)
+      - >
+        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
+        --exclude "*"
+        --include "*.html"
+        --cache-control "no-cache"
 
-          [ -n "$PATHS" ] && aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths $PATHS
-
-        fi
+      # 3) Optional: invalidate HTML at the edge
+      - |
+        if [ -n "${DISTRIBUTION_ID:-}" ]; then
+          PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
+          [ -n "$PATHS" ] && aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths $PATHS
+        fi
