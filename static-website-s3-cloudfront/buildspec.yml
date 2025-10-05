@@ -1,28 +1,45 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - echo "Deploying $WEBSITE_DIR -> s3://$BUCKET_NAME"
-      - aws --version
-  build:
-    commands:
-      # 1) Static assets (long cache)
-      - aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/" \
-          --delete --exclude "*.html" \
-          --cache-control "max-age=31536000,public"
 
-      # 2) HTML (no-cache so edits show quickly)
-      - aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/" \
-          --exclude "*" --include "*.html" \
-          --cache-control "no-cache"
+  install:
 
-      # 3) invalidate HTML at CloudFront for instant edge refresh
-      - |
-        if [ -n "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "none" ]; then
-          echo "Creating CloudFront invalidation for HTML pages..."
-          PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
-          if [ -n "$PATHS" ]; then
-            aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths $PATHS
-          fi
-        fi
+    commands:
+
+      - aws --version
+
+      - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
+
+  build:
+
+    commands:
+
+      - > 
+         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
+
+        --delete
+
+        --exclude "*.html"
+
+        --cache-control "max-age=31536000,public"
+
+      - >
+        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
+
+        --exclude "*"
+
+        --include "*.html"
+
+        --cache-control "no-cache"
+
+      # 3) Optional: invalidate HTML at the edge
+
+      - |
+
+        if [ -n "${DISTRIBUTION_ID:-}" ]; then
+
+          PATHS=$(cd "$WEBSITE_DIR" && find . -type f -name "*.html" -printf "/%P ")
+
+          [ -n "$PATHS" ] && aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths $PATHS
+
+        fi
