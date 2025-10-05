@@ -1,39 +1,25 @@
 version: 0.2
 
 phases:
-
   install:
-
     commands:
-
-      - aws --version
-
-      - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
-
+      - aws --version
+      - echo "Deploying $WEBSITE_DIR to s3://$BUCKET_NAME"
   build:
-
     commands:
-
-      - > 
-         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
-
+    # long cache    
+      - >
+        aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
         --delete
-
         --exclude "*.html"
-
         --cache-control "max-age=31536000,public"
-
+    # no cache
       - >
         aws s3 sync "$WEBSITE_DIR/" "s3://$BUCKET_NAME/"
-
         --exclude "*"
-
         --include "*.html"
-
         --cache-control "no-cache"
-
-      # 3) Optional: invalidate HTML at the edge
-
+      #  Optional: invalidate HTML at the edge
       - |
 
         if [ -n "${DISTRIBUTION_ID:-}" ]; then
